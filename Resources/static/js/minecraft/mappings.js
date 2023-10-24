@@ -88,13 +88,13 @@ async function loadMCVersions() {
 
         //legacy yarn
         const xmlParse = new DOMParser();
-        const intRes = await fetch(`${NO_CORS_BYPASS}/https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/intermediary/maven-metadata.xml`);
+        const intRes = await fetch(`https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/intermediary/maven-metadata.xml`);
         const interXML = xmlParse.parseFromString(await intRes.text(), "text/xml");
         Array.from(interXML.getElementsByTagName("versions")[0].children).forEach(e => {
             yarnVersions[e.innerHTML] = [];
         });
 
-        const yarnRes = await fetch(`${NO_CORS_BYPASS}/https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/yarn/maven-metadata.xml`);
+        const yarnRes = await fetch(`https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/yarn/maven-metadata.xml`);
         const yarnXML = xmlParse.parseFromString(await yarnRes.text(), "text/xml");
         Array.from(yarnXML.getElementsByTagName("versions")[0].children).forEach(e => {
             e = e.innerHTML;
@@ -104,7 +104,7 @@ async function loadMCVersions() {
 
     //load mcp version nums
     if (mcpVersions == null) {
-        const res = await fetch(`${NO_CORS_BYPASS}/https://files.minecraftforge.net/maven/de/oceanlabs/mcp/versions.json`);
+        const res = await fetch(`https://files.minecraftforge.net/maven/de/oceanlabs/mcp/versions.json`);
         mcpVersions = JSON.parse(await res.text());
     }
 
@@ -226,7 +226,7 @@ async function loadMCP(mcpVersion) {
     const stableSnapshot = mcpVersion.shift();
     const verNum = mcpVersion.shift();
     const mcVersion = mcpVersion.shift();
-    const res = await fetch(`${NO_CORS_BYPASS}/http://export.mcpbot.bspk.rs/mcp_${stableSnapshot}/${verNum}-${mcVersion}/mcp_${stableSnapshot}-${verNum}-${mcVersion}.zip`);
+    const res = await fetch(`http://export.mcpbot.bspk.rs/mcp_${stableSnapshot}/${verNum}-${mcVersion}/mcp_${stableSnapshot}-${verNum}-${mcVersion}.zip`);
     const zipContent = await zip.loadAsync(await res.arrayBuffer());
     fieldCSV = (await zipContent.file("fields.csv").async("string")).split("\n");
     methodCSV = (await zipContent.file("methods.csv").async("string")).split("\n");
@@ -279,7 +279,7 @@ async function loadYarn(yarnVersion) {
     if (mcVersionCompare(versionSelect.value, "1.14") != -1)
         res = await fetch(`https://maven.fabricmc.net/net/fabricmc/yarn/${yarnVersion}/yarn-${yarnVersion}-v2.jar`);
     else
-        res = await fetch(`${NO_CORS_BYPASS}/https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/yarn/${yarnVersion}/yarn-${yarnVersion}-v2.jar`);
+        res = await fetch(`https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/yarn/${yarnVersion}/yarn-${yarnVersion}-v2.jar`);
     const zipContent = await zip.loadAsync(await res.arrayBuffer());
 
     const mappings = (await zipContent.file("mappings/mappings.tiny").async("string")).split("<").join("&lt;").split(">").join("&gt;").split("\nc").map(e => e.trim());
@@ -372,7 +372,7 @@ async function loadYarnIntermediaries(mcVersion) {
     if (mcVersionCompare(mcVersion, "1.14") != -1)
         res = await fetch(`https://maven.fabricmc.net/net/fabricmc/intermediary/${mcVersion}/intermediary-${mcVersion}-v2.jar`);
     else
-        res = await fetch(`${NO_CORS_BYPASS}/https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/intermediary/${mcVersion}/intermediary-${mcVersion}-v2.jar`);
+        res = await fetch(`https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/intermediary/${mcVersion}/intermediary-${mcVersion}-v2.jar`);
     const zipContent = await zip.loadAsync(await res.arrayBuffer());
 
     //mappings split by class
@@ -449,7 +449,7 @@ async function loadYarnIntermediaries(mcVersion) {
 
 async function loadMCPSrgs(mcVersion) {
     if (mcVersionCompare(mcVersion, "1.13") != -1) {
-        const res = await fetch(`${NO_CORS_BYPASS}/https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_config/${mcVersion}/mcp_config-${mcVersion}.zip`);
+        const res = await fetch(`https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_config/${mcVersion}/mcp_config-${mcVersion}.zip`);
         const zipContent = await zip.loadAsync(await res.arrayBuffer());
 
         const mappings = (await zipContent.file("config/joined.tsrg").async("string")).split("\n\t").join("\t").split("\n");
@@ -514,7 +514,7 @@ async function loadMCPSrgs(mcVersion) {
             }
         }
     } else {
-        const res = await fetch(`${NO_CORS_BYPASS}/http://export.mcpbot.bspk.rs/mcp/${mcVersion}/mcp-${mcVersion}-srg.zip`);
+        const res = await fetch(`http://export.mcpbot.bspk.rs/mcp/${mcVersion}/mcp-${mcVersion}-srg.zip`);
         const zipContent = await zip.loadAsync(await res.arrayBuffer());
         const mappings = (await zipContent.file("joined.srg").async("string")).split("\n");
 
@@ -598,7 +598,7 @@ async function loadMojang(mcVersion) {
         }
     }
     const mappingURL = JSON.parse(await (await fetch(versionData.url)).text())?.downloads?.client_mappings?.url;
-    let mappings = (await (await fetch(`${NO_CORS_BYPASS}/${mappingURL}`))?.text())?.split("<").join("&lt;").split(">").join("&gt;").split(".").join("/");
+    let mappings = (await (await fetch(`${mappingURL}`))?.text())?.split("<").join("&lt;").split(">").join("&gt;").split(".").join("/");
     mappings = mappings.split("\n");
     mappings.shift();
     mappings = mappings.join("\n").match(/^[^\s].+?$(?:\n\s.+?$)*/gm);
